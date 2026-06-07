@@ -129,14 +129,22 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="src\Core\TrayIcon.h" />
+    <ClInclude Include="src\Core\WallpaperInjector.h" />
+    <ClInclude Include="src\Graphics\Renderer.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="WeatherLIverWallpaper.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WeatherLIverWallpaper.cpp" />
+    <ClCompile Include="src\Core\TrayIcon.cpp" />
+    <ClCompile Include="src\Core\WallpaperInjector.cpp" />
+    <ClCompile Include="src\Graphics\Renderer.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WeatherLIverWallpaper.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico" />
