@@ -2,6 +2,7 @@
 
 #include "../Core/Application.h"
 #include "AnimeTree.h"
+#include "Terrain.h"
 #include <math.h>
 
 namespace Sandbox {
@@ -21,8 +22,12 @@ namespace Sandbox {
         TreeSkin m_mainSkin;
         TreeSkin m_smallSkin;
 
+        TerrainSkin m_terrainSkin;
+
         AnimeTree m_mainTree;
         AnimeTree m_smallTree;
+        
+        Terrain m_terrain;
         
         float m_windSpeed;
     };
