@@ -66,6 +66,7 @@ namespace Sandbox {
             ID2D1Bitmap* gAutumn = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/bg_autumn.png");
             ID2D1Bitmap* gWinter = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/bg_winter.png");
             ID2D1Bitmap* puddleTex = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/water_puddle.png");
+            ID2D1Bitmap* cloudTex = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/cloud.png");
 
             // Setup Terrain Skin
             m_terrainSkin.grassSpring = gSpring;
@@ -73,7 +74,7 @@ namespace Sandbox {
             m_terrainSkin.grassAutumn = gAutumn;
             m_terrainSkin.grassWinter = gWinter;
             m_terrainSkin.puddleTexture = puddleTex;
-            m_terrainSkin.cloudTexture = winter; // Use snow_flake as a soft cloud texture
+            m_terrainSkin.cloudTexture = cloudTex;
             m_terrain.Init(width, height);
             m_terrain.SetSkin(m_terrainSkin);
 

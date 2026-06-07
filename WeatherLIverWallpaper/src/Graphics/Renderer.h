@@ -25,7 +25,8 @@ namespace Graphics {
         void Clear(float r, float g, float b);
         void DrawLine(float x0, float y0, float x1, float y1, float r, float g, float b, float thickness = 1.0f);
         void DrawBezierCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float r, float g, float b, float thickness = 1.0f);
-        void FillCircle(float cx, float cy, float radius, float r, float g, float b);
+        void FillCircle(float cx, float cy, float radius, float r, float g, float b, float a = 1.0f);
+        void FillEllipse(float cx, float cy, float rx, float ry, float r, float g, float b, float a = 1.0f);
         
         // Texture APIs
         ID2D1Bitmap* LoadTexture(const std::wstring& filePath);
@@ -43,7 +44,7 @@ namespace Graphics {
         HRESULT CreateDeviceResources();
         void DiscardDeviceResources();
         
-        ID2D1SolidColorBrush* GetColorBrush(float r, float g, float b);
+        ID2D1SolidColorBrush* GetColorBrush(float r, float g, float b, float a = 1.0f);
         ID2D1SolidColorBrush* m_pTempBrush;
     };
 }

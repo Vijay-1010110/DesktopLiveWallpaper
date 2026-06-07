@@ -129,8 +129,9 @@ namespace Sandbox {
         }
 
         if (currentBgTex) {
-            // Stretch the scenic background to fill the entire screen
-            renderer.DrawTexture(currentBgTex, 0.0f, 0.0f, m_screenWidth, m_screenHeight);
+            // Draw the cropped scenic background (which is just the hills now) 
+            // on the bottom 50% of the screen, leaving the top 50% for the procedural sky.
+            renderer.DrawTexture(currentBgTex, 0.0f, m_screenHeight * 0.5f, m_screenWidth, m_screenHeight * 0.5f);
         }
 
         // 2. Draw Puddle with 3D Perspective Squash

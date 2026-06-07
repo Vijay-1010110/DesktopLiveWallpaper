@@ -59,10 +59,10 @@ namespace Graphics {
         if (m_pRenderTarget) { m_pRenderTarget->Release(); m_pRenderTarget = nullptr; }
     }
 
-    ID2D1SolidColorBrush* Renderer::GetColorBrush(float r, float g, float b)
+    ID2D1SolidColorBrush* Renderer::GetColorBrush(float r, float g, float b, float a)
     {
         if (m_pTempBrush) {
-            m_pTempBrush->SetColor(D2D1::ColorF(r, g, b));
+            m_pTempBrush->SetColor(D2D1::ColorF(r, g, b, a));
         }
         return m_pTempBrush;
     }
@@ -101,41 +101,75 @@ namespace Graphics {
 
     void Renderer::DrawLine(float x0, float y0, float x1, float y1, float r, float g, float b, float thickness)
     {
-        if (m_pRenderTarget) {
-            m_pRenderTarget->DrawLine(D2D1::Point2F(x0, y0), D2D1::Point2F(x1, y1), GetColorBrush(r, g, b), thickness);
+        if (m_pRenderTarget)
+        {
+            auto pBrush = GetColorBrush(r, g, b, 1.0f);
+            if (pBrush)
+            {
+                m_pRenderTarget->DrawLine(
+                    D2D1::Point2F(x0, y0),
+                    D2D1::Point2F(x1, y1),
+                    pBrush,
+                    thickness
+                );
+            }
         }
     }
 
     void Renderer::DrawBezierCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float r, float g, float b, float thickness)
     {
-        if (m_pRenderTarget && m_pDirect2dFactory) {
-            ID2D1PathGeometry* pathGeometry = nullptr;
-            if (SUCCEEDED(m_pDirect2dFactory->CreatePathGeometry(&pathGeometry))) {
-                ID2D1GeometrySink* sink = nullptr;
-                if (SUCCEEDED(pathGeometry->Open(&sink))) {
-                    sink->BeginFigure(D2D1::Point2F(x0, y0), D2D1_FIGURE_BEGIN_HOLLOW);
-                    D2D1_BEZIER_SEGMENT bezier = {
-                        D2D1::Point2F(x1, y1),
-                        D2D1::Point2F(x2, y2),
-                        D2D1::Point2F(x3, y3)
-                    };
-                    sink->AddBezier(&bezier);
-                    sink->EndFigure(D2D1_FIGURE_END_OPEN);
-                    sink->Close();
-                    
-                    m_pRenderTarget->DrawGeometry(pathGeometry, GetColorBrush(r, g, b), thickness);
-                    sink->Release();
+        if (m_pRenderTarget)
+        {
+            auto pBrush = GetColorBrush(r, g, b, 1.0f);
+            if (pBrush)
+            {
+                ID2D1PathGeometry* pPathGeometry = nullptr;
+                if (SUCCEEDED(m_pDirect2dFactory->CreatePathGeometry(&pPathGeometry)))
+                {
+                    ID2D1GeometrySink* pSink = nullptr;
+                    if (SUCCEEDED(pPathGeometry->Open(&pSink)))
+                    {
+                        pSink->BeginFigure(D2D1::Point2F(x0, y0), D2D1_FIGURE_BEGIN_HOLLOW);
+                        pSink->AddBezier(D2D1::BezierSegment(
+                            D2D1::Point2F(x1, y1),
+                            D2D1::Point2F(x2, y2),
+                            D2D1::Point2F(x3, y3)
+                        ));
+                        pSink->EndFigure(D2D1_FIGURE_END_OPEN);
+                        pSink->Close();
+
+                        m_pRenderTarget->DrawGeometry(pPathGeometry, pBrush, thickness);
+                        pSink->Release();
+                    }
+                    pPathGeometry->Release();
                 }
-                pathGeometry->Release();
             }
         }
     }
 
-    void Renderer::FillCircle(float cx, float cy, float radius, float r, float g, float b)
+    void Renderer::FillCircle(float cx, float cy, float radius, float r, float g, float b, float a)
     {
-        if (m_pRenderTarget) {
-            D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(cx, cy), radius, radius);
-            m_pRenderTarget->FillEllipse(ellipse, GetColorBrush(r, g, b));
+        if (m_pRenderTarget)
+        {
+            auto pBrush = GetColorBrush(r, g, b, a);
+            if (pBrush)
+            {
+                D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(cx, cy), radius, radius);
+                m_pRenderTarget->FillEllipse(ellipse, pBrush);
+            }
+        }
+    }
+
+    void Renderer::FillEllipse(float cx, float cy, float rx, float ry, float r, float g, float b, float a)
+    {
+        if (m_pRenderTarget)
+        {
+            auto pBrush = GetColorBrush(r, g, b, a);
+            if (pBrush)
+            {
+                D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(cx, cy), rx, ry);
+                m_pRenderTarget->FillEllipse(ellipse, pBrush);
+            }
         }
     }
 

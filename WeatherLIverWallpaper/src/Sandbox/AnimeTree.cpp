@@ -184,6 +184,10 @@ namespace Sandbox {
         // Base angle is -90 degrees (pointing straight up)
         float baseAngle = -M_PI / 2.0f;
         
+        // Draw a shadow at the base to ground the tree
+        float shadowAlpha = (m_currentSeason == Season::WINTER) ? 0.3f : 0.6f;
+        renderer.FillEllipse(m_x, m_y, 80.0f * m_scale, 20.0f * m_scale, 0.1f, 0.2f, 0.1f, shadowAlpha);
+
         // Two-pass rendering: First draw all branches, then draw all leaves on top
         DrawBranch(renderer, m_root, m_x, m_y, baseAngle, windOffset, false);
         DrawBranch(renderer, m_root, m_x, m_y, baseAngle, windOffset, true);
