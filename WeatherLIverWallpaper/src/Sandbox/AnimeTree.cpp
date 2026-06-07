@@ -72,14 +72,38 @@ namespace Sandbox {
 
         // Generate leaves for this branch if it's an end branch or high depth
         if (branch.children.empty() || branch.depth >= 4) {
-            std::uniform_real_distribution<float> rotDist(-30.0f, 30.0f); // Fan out +/- 30 degrees from branch angle
             
-            for (int i = 0; i < 3; ++i) {
+            // --- Generate Spring Leaves (Cherry Blossom Flowers) ---
+            std::uniform_int_distribution<int> flowerDist(2, 4); // 2-4 flowers per branch end
+            int numFlowers = flowerDist(rng);
+            std::uniform_real_distribution<float> offsetDist(-15.0f, 15.0f); // Scatter flowers slightly
+            std::uniform_real_distribution<float> flowerRotDist(0.0f, 360.0f);
+
+            for (int f = 0; f < numFlowers; ++f) {
+                float fx = offsetDist(rng);
+                float fy = offsetDist(rng);
+                float fRot = flowerRotDist(rng);
+
+                for (int i = 0; i < 5; ++i) { // 5 petals make a perfect star-shaped flower
+                    LeafData leaf;
+                    leaf.offsetX = fx;
+                    leaf.offsetY = fy;
+                    leaf.baseRotation = fRot + (i * 72.0f); // 360 / 5 = 72 degrees
+                    branch.springLeaves.push_back(leaf);
+                }
+            }
+            
+            // --- Generate Summer/Autumn Leaves (Fanned Clusters) ---
+            std::uniform_int_distribution<int> leafDist(3, 5); // 3-5 large leaves
+            int numLeaves = leafDist(rng);
+            std::uniform_real_distribution<float> rotDist(-40.0f, 40.0f); // Fan out +/- 40 degrees
+            
+            for (int i = 0; i < numLeaves; ++i) {
                 LeafData leaf;
-                leaf.offsetX = 0.0f; // No spatial offset, attach exactly at the joint
+                leaf.offsetX = 0.0f; // Attached exactly at the joint
                 leaf.offsetY = 0.0f;
                 leaf.baseRotation = rotDist(rng);
-                branch.leaves.push_back(leaf);
+                branch.summerLeaves.push_back(leaf);
             }
         }
     }
@@ -199,18 +223,26 @@ namespace Sandbox {
             renderer.DrawLine(startX, startY, endX, endY, r, g, b, scaledThickness);
         } else {
             // Pass 2: Draw the leaves on top of the branches
-            if (!branch.leaves.empty()) {
+            bool hasLeaves = (m_currentSeason == Season::SPRING) ? !branch.springLeaves.empty() : !branch.summerLeaves.empty();
+            if (hasLeaves) {
                 ID2D1Bitmap* tex = nullptr;
                 if (m_currentSeason == Season::SPRING) tex = m_skin.leafTextureSpring;
                 if (m_currentSeason == Season::SUMMER) tex = m_skin.leafTextureSummer;
                 if (m_currentSeason == Season::AUTUMN) tex = m_skin.leafTextureAutumn;
 
                 if (tex && m_currentSeason != Season::WINTER) {
-                    int leafCount = (m_currentSeason == Season::AUTUMN) ? 1 : branch.leaves.size();
+                    const auto& targetLeaves = (m_currentSeason == Season::SPRING) ? branch.springLeaves : branch.summerLeaves;
+                    int leafCount = targetLeaves.size();
+                    if (m_currentSeason == Season::AUTUMN) {
+                        leafCount = leafCount / 2;
+                        if (leafCount < 1) leafCount = 1;
+                    }
 
                     for (int i = 0; i < leafCount; ++i) {
-                        const auto& leaf = branch.leaves[i];
-                        float size = 64.0f * m_scale;
+                        const auto& leaf = targetLeaves[i];
+                        
+                        // Scale spring petals down so the 5-petal flower is roughly the size of one summer leaf
+                        float size = (m_currentSeason == Season::SPRING) ? 32.0f * m_scale : 64.0f * m_scale;
                         
                         // Determine pivot point and rotation offset based on the specific PNG image
                         float pivotX = 0.5f;
@@ -234,9 +266,13 @@ namespace Sandbox {
                             textureOffset = 135.0f;
                         }
                         
-                        // Position X and Y so that the pivot point sits EXACTLY at endX, endY
-                        float lx = endX - (size * pivotX);
-                        float ly = endY - (size * pivotY);
+                        // Apply the flower's spatial offset (scatter) from the branch joint
+                        float targetX = endX + leaf.offsetX * m_scale;
+                        float targetY = endY + leaf.offsetY * m_scale;
+                        
+                        // Position X and Y so that the pivot point sits EXACTLY at targetX, targetY
+                        float lx = targetX - (size * pivotX);
+                        float ly = targetY - (size * pivotY);
                         
                         // Calculate branch direction in degrees
                         float branchAngleDeg = finalAngle * (180.0f / M_PI);

@@ -27,7 +27,8 @@ namespace Sandbox {
         float thickness;
         int depth;
         std::vector<Branch> children;
-        std::vector<LeafData> leaves; // Store leaf data so they don't jitter every frame
+        std::vector<LeafData> springLeaves; // Flower arrangements
+        std::vector<LeafData> summerLeaves; // Fanned arrangements
     };
 
     struct Particle {
