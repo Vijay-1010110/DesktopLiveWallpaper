@@ -12,4 +12,9 @@ Target frame rate is ~30 FPS for optimization.
 - **Wind**: Simulated with cartoon-style wind lines and flowing leaves, based on live wind speed data.
 
 ## Current State
-Phase 1: Initializing boilerplate. Setting up the WorkerW injection and Direct2D to render a basic animated scene at 30 FPS to prove the wallpaper concept works.
+Phase 2: Developed an interactive procedural environment. 
+- Implemented `AnimeTree` for procedurally generating branching trees that sway with simulated wind and drop seasonal particles (leaves, snow, petals).
+- Implemented a `Terrain` system that uses generated and cropped Studio Ghibli style textures on the bottom half of the screen.
+- Implemented a dynamic weather and puddle system that fills with rain.
+- Implemented a procedural Cloud and Sky system where the sky changes color dynamically based on the season and clouds drift horizontally across the screen with varying seasonal densities.
+- Implemented a system where users can dynamically change the season using the 1, 2, 3, 4 number keys, and toggle rain using the 5 key.
