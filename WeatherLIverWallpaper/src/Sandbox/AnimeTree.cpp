@@ -154,7 +154,12 @@ namespace Sandbox {
             if (m_currentSeason == Season::WINTER) {
                 // Snow falls from everywhere above the tree
                 xDist = std::uniform_real_distribution<float>(m_x - 1200.0f, m_x + 1200.0f);
-                yDist = std::uniform_real_distribution<float>(0.0f, m_y - 800.0f * m_scale);
+                float topY = m_y - 800.0f * m_scale;
+                // Ensure the min value is always strictly less than the max value
+                float minY = topY - 400.0f;
+                float maxY = (topY > 0.0f) ? topY : 0.0f; 
+                if (minY >= maxY) minY = maxY - 1.0f;
+                yDist = std::uniform_real_distribution<float>(minY, maxY);
             }
 
             Particle p;
