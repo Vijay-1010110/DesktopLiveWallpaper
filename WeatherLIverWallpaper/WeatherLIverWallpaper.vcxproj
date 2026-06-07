@@ -135,6 +135,9 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\Application.cpp" />
+    <ClCompile Include="src\Sandbox\SandboxApp.cpp" />
+    <ClCompile Include="src\Sandbox\AnimeTree.cpp" />
     <ClCompile Include="src\Core\TrayIcon.cpp" />
     <ClCompile Include="src\Core\WallpaperInjector.cpp" />
     <ClCompile Include="src\Graphics\Renderer.cpp" />
