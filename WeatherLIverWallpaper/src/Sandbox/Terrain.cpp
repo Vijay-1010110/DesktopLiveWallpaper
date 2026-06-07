@@ -67,32 +67,35 @@ namespace Sandbox {
 
     void Terrain::Render(Graphics::Renderer& renderer)
     {
-        // 1. Draw Grass
-        ID2D1Bitmap* currentGrassTex = nullptr;
+        // 1. Draw Full-Screen Scenic Background
+        ID2D1Bitmap* currentBgTex = nullptr;
         switch (m_currentSeason) {
-            case Season::SPRING: currentGrassTex = m_skin.grassSpring; break;
-            case Season::SUMMER: currentGrassTex = m_skin.grassSummer; break;
-            case Season::AUTUMN: currentGrassTex = m_skin.grassAutumn; break;
-            case Season::WINTER: currentGrassTex = m_skin.grassWinter; break;
+            case Season::SPRING: currentBgTex = m_skin.grassSpring; break;
+            case Season::SUMMER: currentBgTex = m_skin.grassSummer; break;
+            case Season::AUTUMN: currentBgTex = m_skin.grassAutumn; break;
+            case Season::WINTER: currentBgTex = m_skin.grassWinter; break;
         }
 
-        if (currentGrassTex) {
-            // Tile the grass across the bottom
-            // Since we are doing a simple 2D renderer, we can draw a few stretched rectangles or tiles
-            // We'll just stretch one big texture across the bottom for now
-            float grassY = m_screenHeight - m_terrainHeight;
-            renderer.DrawTexture(currentGrassTex, 0.0f, grassY, m_screenWidth, m_terrainHeight);
+        if (currentBgTex) {
+            // Stretch the scenic background to fill the entire screen
+            renderer.DrawTexture(currentBgTex, 0.0f, 0.0f, m_screenWidth, m_screenHeight);
         }
 
-        // 2. Draw Puddle
+        // 2. Draw Puddle with 3D Perspective Squash
         if (m_puddleFillLevel > 0.01f && m_skin.puddleTexture) {
-            // Scale and fade puddle based on fill level
+            // Scale puddle based on fill level
             float currentWidth = m_puddleMaxWidth * m_puddleFillLevel;
-            float currentHeight = m_puddleMaxHeight * m_puddleFillLevel;
+            
+            // Apply extreme squash to give 3D depth perspective (lying flat on the ground)
+            float perspectiveSquash = 0.2f; 
+            float currentHeight = (m_puddleMaxHeight * m_puddleFillLevel) * perspectiveSquash;
+            
             float opacity = m_puddleFillLevel * 0.8f; // Max 80% opacity
 
+            // Adjust puddle position to match the new tree depth (height - 350)
+            float targetPuddleY = m_screenHeight - 330.0f; 
             float px = m_puddleX - (currentWidth / 2.0f);
-            float py = m_puddleY - (currentHeight / 2.0f);
+            float py = targetPuddleY - (currentHeight / 2.0f);
 
             renderer.DrawTexture(m_skin.puddleTexture, px, py, currentWidth, currentHeight, opacity);
         }

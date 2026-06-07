@@ -61,10 +61,10 @@ namespace Sandbox {
             ID2D1Bitmap* autumn = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/leaf_autumn.png");
             ID2D1Bitmap* winter = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/snow_flake.png");
 
-            ID2D1Bitmap* gSpring = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/grass_spring.png");
-            ID2D1Bitmap* gSummer = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/grass_summer.png");
-            ID2D1Bitmap* gAutumn = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/grass_autumn.png");
-            ID2D1Bitmap* gWinter = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/grass_winter.png");
+            ID2D1Bitmap* gSpring = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/bg_spring.png");
+            ID2D1Bitmap* gSummer = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/bg_summer.png");
+            ID2D1Bitmap* gAutumn = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/bg_autumn.png");
+            ID2D1Bitmap* gWinter = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/bg_winter.png");
             ID2D1Bitmap* puddleTex = renderer.LoadTexture(L"d:/VS 22 projects/WeatherLIverWallpaper/WeatherLIverWallpaper/assets/water_puddle.png");
 
             // Setup Terrain Skin
@@ -103,17 +103,13 @@ namespace Sandbox {
         }
 
         // Set transforms dynamically in case window resizes
-        m_mainTree.SetTransform(width / 2.0f, height - 150.0f, 1.0f);
-        m_smallTree.SetTransform(width * 0.75f, height - 150.0f, 0.6f);
+        // Position trees so they sit on the crest of the rolling hills in the background image
+        m_mainTree.SetTransform(width * 0.45f, height - 350.0f, 1.0f);
+        m_smallTree.SetTransform(width * 0.75f, height - 450.0f, 0.6f);
 
-        // Draw sky background based on season
         Season s = m_mainTree.GetSeason();
-        if (s == Season::SPRING) renderer.Clear(0.8f, 0.9f, 1.0f); // Bright blue sky
-        if (s == Season::SUMMER) renderer.Clear(0.5f, 0.8f, 1.0f); // Deep blue sky
-        if (s == Season::AUTUMN) renderer.Clear(0.9f, 0.7f, 0.6f); // Sunset orange sky
-        if (s == Season::WINTER) renderer.Clear(0.8f, 0.8f, 0.9f); // Greyish winter sky
 
-        // Draw ground (Terrain layer underneath)
+        // Draw the full-screen scenic background (Terrain layer)
         m_terrain.Render(renderer);
 
         // Render the procedural trees
