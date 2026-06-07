@@ -73,7 +73,7 @@ namespace Sandbox {
             m_terrainSkin.grassAutumn = gAutumn;
             m_terrainSkin.grassWinter = gWinter;
             m_terrainSkin.puddleTexture = puddleTex;
-
+            m_terrainSkin.cloudTexture = winter; // Use snow_flake as a soft cloud texture
             m_terrain.Init(width, height);
             m_terrain.SetSkin(m_terrainSkin);
 
@@ -109,7 +109,16 @@ namespace Sandbox {
 
         Season s = m_mainTree.GetSeason();
 
-        // Draw the full-screen scenic background (Terrain layer)
+        // 1. Draw solid sky color based on season
+        if (s == Season::SPRING) renderer.Clear(0.85f, 0.95f, 1.0f); 
+        else if (s == Season::SUMMER) renderer.Clear(0.6f, 0.85f, 1.0f); 
+        else if (s == Season::AUTUMN) renderer.Clear(1.0f, 0.8f, 0.6f); 
+        else if (s == Season::WINTER) renderer.Clear(0.7f, 0.75f, 0.8f);
+
+        // 2. Draw procedural clouds
+        m_terrain.RenderSky(renderer);
+
+        // 3. Draw the transparent scenic background (hills)
         m_terrain.Render(renderer);
 
         // Render the procedural trees

@@ -26,6 +26,22 @@ namespace Sandbox {
         m_puddleY = m_screenHeight - (m_terrainHeight / 2.0f);
         m_puddleMaxWidth = 400.0f;
         m_puddleMaxHeight = 80.0f;
+
+        GenerateClouds(20); // Generate initial batch of clouds
+    }
+
+    void Terrain::GenerateClouds(int count) {
+        m_clouds.clear();
+        for (int i = 0; i < count; ++i) {
+            Cloud c;
+            c.x = static_cast<float>(rand() % static_cast<int>(m_screenWidth * 1.5f)) - (m_screenWidth * 0.25f);
+            c.y = static_cast<float>(rand() % static_cast<int>(m_screenHeight * 0.5f)); // Top half of screen
+            c.width = 200.0f + static_cast<float>(rand() % 400);
+            c.height = c.width * (0.3f + 0.2f * (rand() % 100) / 100.0f);
+            c.speed = 5.0f + static_cast<float>(rand() % 15);
+            c.opacity = 0.4f + (rand() % 40) / 100.0f;
+            m_clouds.push_back(c);
+        }
     }
 
     void Terrain::SetSkin(const TerrainSkin& skin)
@@ -62,6 +78,42 @@ namespace Sandbox {
         if (m_currentSeason == Season::SUMMER && m_currentWeather != Weather::RAINING) {
             m_puddleFillLevel -= (dryRate * 2.0f) * deltaTime;
             if (m_puddleFillLevel < 0.0f) m_puddleFillLevel = 0.0f;
+        }
+
+        // Update clouds
+        for (auto& c : m_clouds) {
+            c.x += c.speed * deltaTime;
+            if (c.x > m_screenWidth + c.width) {
+                // Wrap around
+                c.x = -c.width;
+                c.y = static_cast<float>(rand() % static_cast<int>(m_screenHeight * 0.5f));
+            }
+        }
+    }
+
+    void Terrain::RenderSky(Graphics::Renderer& renderer) {
+        if (!m_skin.cloudTexture) return;
+
+        // Draw each cloud
+        for (const auto& c : m_clouds) {
+            float opacity = c.opacity;
+            
+            // Adjust cloud appearance based on season
+            if (m_currentSeason == Season::WINTER || m_currentSeason == Season::AUTUMN) {
+                // More dense/overcast looking clouds
+                opacity *= 1.5f; 
+            } else if (m_currentSeason == Season::SPRING) {
+                // Light wispy clouds
+                opacity *= 0.7f;
+            }
+
+            if (opacity > 1.0f) opacity = 1.0f;
+
+            // Draw the cloud texture (snow_flake stretched horizontally)
+            // It acts as a soft white blob. We draw a few overlapping to make it fluffier.
+            renderer.DrawTexture(m_skin.cloudTexture, c.x, c.y, c.width, c.height, opacity);
+            renderer.DrawTexture(m_skin.cloudTexture, c.x + c.width*0.2f, c.y - c.height*0.2f, c.width*0.8f, c.height, opacity*0.8f);
+            renderer.DrawTexture(m_skin.cloudTexture, c.x - c.width*0.1f, c.y + c.height*0.1f, c.width*0.6f, c.height*0.9f, opacity*0.9f);
         }
     }
 

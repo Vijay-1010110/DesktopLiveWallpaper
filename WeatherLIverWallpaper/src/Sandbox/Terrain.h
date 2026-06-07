@@ -24,6 +24,16 @@ namespace Sandbox {
         ID2D1Bitmap* grassWinter = nullptr;
 
         ID2D1Bitmap* puddleTexture = nullptr;
+        ID2D1Bitmap* cloudTexture = nullptr;
+    };
+
+    struct Cloud {
+        float x;
+        float y;
+        float width;
+        float height;
+        float speed;
+        float opacity;
     };
 
     class Terrain {
@@ -37,7 +47,10 @@ namespace Sandbox {
         void SetWeather(Weather weather);
 
         void Update(float deltaTime);
+        void RenderSky(Graphics::Renderer& renderer);
         void Render(Graphics::Renderer& renderer);
+
+        void GenerateClouds(int count);
 
     private:
         TerrainSkin m_skin;
@@ -56,6 +69,9 @@ namespace Sandbox {
         float m_puddleY;
         float m_puddleMaxWidth;
         float m_puddleMaxHeight;
+
+        // Clouds
+        std::vector<Cloud> m_clouds;
     };
 
 }
